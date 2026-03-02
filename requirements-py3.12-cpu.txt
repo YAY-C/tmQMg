@@ -25,7 +25,6 @@ multidict==6.7.1
 narwhals==2.17.0
 networkx==3.6.1
 numpy==2.3.5
-packaging @ file:///home/task_176104874243446/conda-bld/packaging_1761049080023/work
 pandas==3.0.1
 pillow==12.0.0
 platformdirs==4.9.2
