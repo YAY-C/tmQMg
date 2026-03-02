@@ -199,14 +199,14 @@ def run_ml(hyper_param: dict, wandb_project_name: str = '<wandb_project_name>', 
 
 def run_baseline(target: str, use_atomic_contribution_linear_fit: bool):
 
-    with open('./../outliers.txt', 'r') as fh:
+    with open('./to_exclude_from-tmQMg-ref_codes.txt', 'r') as fh:
         outliers = fh.read().splitlines()
 
     hyper_param = {
         'name': 'Baseline - ' + target,
         'data': {
             'dataset': tmQMg,
-            'root_dir': '<root_dir>',
+            'root_dir': 'test_subset/',
             'val_set_size': 0.1,
             'test_set_size': 0.1,
             'graph_representation': 'baseline',
@@ -215,11 +215,11 @@ def run_baseline(target: str, use_atomic_contribution_linear_fit: bool):
         },
         'model': {
             'name': 'GilmerNet',
-            'method': GilmerNetGraphLevelFeatures,
+            'method': GilmerNet if not args.with_graph_features else GilmerNetGraphLevelFeatures,
             'parameters': {
                 'n_node_features': 4,
                 'n_edge_features': 2,
-                'n_graph_features': 4,
+                #'n_graph_features': 4,
                 'dim': 128,
                 'set2set_steps': 4,
                 'n_atom_jumps': 4
@@ -252,19 +252,20 @@ def run_baseline(target: str, use_atomic_contribution_linear_fit: bool):
         'n_epochs': 300,
         'seed': 2022
     }
-
+    if args.with_graph_features:
+        hyper_param["model"]["parameters"]['n_graph_features'] = 4
     run_ml(hyper_param)
 
 def run_uNatQ(target: str, use_atomic_contribution_linear_fit: bool):
 
-    with open('./../outliers.txt', 'r') as fh:
+    with open('./to_exclude_from-tmQMg-ref_codes.txt', 'r') as fh:
         outliers = fh.read().splitlines()
 
     hyper_param = {
         'name': 'u-NatQ - ' + target,
         'data': {
             'dataset': tmQMg,
-            'root_dir': '<root_dir>',
+            'root_dir': 'test_subset/',
             'val_set_size': 0.1,
             'test_set_size': 0.1,
             'graph_representation': 'u-NatQ',
@@ -273,11 +274,11 @@ def run_uNatQ(target: str, use_atomic_contribution_linear_fit: bool):
         },
         'model': {
             'name': 'GilmerNet',
-            'method': GilmerNetGraphLevelFeatures,
+            'method': GilmerNet if not args.with_graph_features else GilmerNetGraphLevelFeatures,
             'parameters': {
                 'n_node_features': 21,
                 'n_edge_features': 19,
-                'n_graph_features': 4,
+                #'n_graph_features': 4,
                 'dim': 128,
                 'set2set_steps': 4,
                 'n_atom_jumps': 4
@@ -311,18 +312,20 @@ def run_uNatQ(target: str, use_atomic_contribution_linear_fit: bool):
         'seed': 2022
     }
 
+    if args.with_graph_features:
+        hyper_param["model"]["parameters"]['n_graph_features'] = 4
     run_ml(hyper_param)
 
 def run_dNatQ(target: str, use_atomic_contribution_linear_fit: bool):
 
-    with open('./../outliers.txt', 'r') as fh:
+    with open('./to_exclude_from-tmQMg-ref_codes.txt', 'r') as fh:
         outliers = fh.read().splitlines()
 
     hyper_param = {
         'name': 'd-NatQ - ' + target,
         'data': {
             'dataset': tmQMg,
-            'root_dir': '<root_dir>',
+            'root_dir': 'test_subset/',
             'val_set_size': 0.1,
             'test_set_size': 0.1,
             'graph_representation': 'd-NatQ',
@@ -331,11 +334,11 @@ def run_dNatQ(target: str, use_atomic_contribution_linear_fit: bool):
         },
         'model': {
             'name': 'GilmerNet',
-            'method': GilmerNetGraphLevelFeatures,
+            'method': GilmerNet if not args.with_graph_features else GilmerNetGraphLevelFeatures,
             'parameters': {
                 'n_node_features': 21,
                 'n_edge_features': 26,
-                'n_graph_features': 4,
+                #'n_graph_features': 4,
                 'dim': 128,
                 'set2set_steps': 4,
                 'n_atom_jumps': 6
@@ -369,22 +372,42 @@ def run_dNatQ(target: str, use_atomic_contribution_linear_fit: bool):
         'seed': 2022
     }
 
+    if args.with_graph_features:
+        hyper_param["model"]["parameters"]['n_graph_features'] = 4
     run_ml(hyper_param)
 
 # - - - entry point - - - #
 if __name__ == "__main__":
 
+    graphs_runner = {
+                    "baseline" : run_baseline,
+                    "uNatQG" : run_uNatQ,
+                    "dNatQG" : run_dNatQ
+                    }
+    selected_targets = [
+                'tzvp_homo_lumo_gap',
+                'tzvp_dipole_moment',
+              ]
+
+    import argparse
+    parser = argparse.ArgumentParser(description="This script can run various NatQG models and reproduces some results for the tmPHOTO subset")
+    parser.add_argument("--graph", required=True, choices=graphs_runner.keys(), nargs="+", help="selects the graph model")
+    parser.add_argument("--target", required=True, choices=selected_targets, nargs="+", help="selects the target")
+    parser.add_argument("--with_graph_features", required=False, action="store_true", help="selects MPNN+G model (default is MPNN)")
+
+    args = parser.parse_args()
+
     # general targets
     targets = [
-        'tzvp_homo_lumo_gap',
-        'polarisability',
-        'tzvp_dipole_moment',
-        'tzvp_homo_energy',
-        'tzvp_lumo_energy',
-        'heat_capacity',
-        'entropy',
-        'gibbs_energy_correction',
-        'highest_vibrational_frequency'
+       'tzvp_homo_lumo_gap',
+       'polarisability',
+       'tzvp_dipole_moment',
+       'tzvp_homo_energy',
+       'tzvp_lumo_energy',
+       'heat_capacity',
+       'entropy',
+       'gibbs_energy_correction',
+       'highest_vibrational_frequency'
     ]
 
     # targets for which to use atomic contribution linear fit
@@ -396,14 +419,12 @@ if __name__ == "__main__":
         'gibbs_energy'
     ]
 
-    for target in targets:
+    for target in args.target:
+        for graph in args.graph:
+            graphs_runner[graph](target, False)
 
-        run_baseline(target, False)
-        run_uNatQ(target, False)
-        run_dNatQ(target, False)
-
-    for target in acf_targets:
-
-        run_baseline(target, True)
-        run_uNatQ(target, True)
-        run_dNatQ(target, True)
+#    for target in acf_targets:
+#
+#        run_baseline(target, True)
+#        run_uNatQ(target, True)
+#        run_dNatQ(target, True)
