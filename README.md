@@ -1,3 +1,23 @@
+# Disclamer
+This repository has been forked from the original [GitHub repository](https://github.com/uiocompcat/tmQMg)
+and modified to reproduce the results reported in:
+> Benchmarking Physics-inspired Machine Learning Models for Transition Metal Complexes with Diverse Charge and Spin States
+>
+>  Yuri Cho , Ksenia R. Briling , Yannick Calvino Alonso , Rubén Laplaza, and Clemence Corminboeuf 
+>
+> [doi.org/10.26434/chemrxiv-2025-j38bv](https://doi.org/10.26434/chemrxiv-2025-j38bv)
+
+For the original or updated model please refer to the original GitHub reference.
+
+## To reprouce the reported results
+Installation procedure is detailed in the [installation instructions](INSTALL.md) file.
+
+To reproduce the reported results please refer to the instructions in the [following section](scripts/Gilmer-MPNN/).
+
+------------------------------------------------------------------
+------------------------------------------------------------------
+# The following has been copied from the original repository
+
 **Update November 2025**: 8 erroneous structures have been removed from the dataset.
 
 **Update 2024**: The tmQMg dataset has been extended by 13,756 transition metal complexes extracted from the Cambridge Structural Database.

@@ -1,3 +1,23 @@
+# Disclamer:
+This section has been modified to reproduce the results reported in
+[Benchmarking Physics-inspired Machine Learning Models for Transition Metal Complexes with Diverse Charge and Spin States](doi.org/10.26434/chemrxiv-2025-j38bv).
+
+Specifically, the scripts has been modified to retrain the models based on all the complexes readily available from the tmQMg dataset and present in the tmPHOTO dataset.
+This is done by taking advantage of the `outliers` parameters in the `ml.py` script to exclude all the tmQMg complexes absent from the tmPHOTO dataset.
+These amount to an overlapping set of 2696 complexes (~65% of the original tmPHOTO).
+
+The full list of modifications:
+- `overlap-tmPHOTO_tmQMg-ref_codes.txt` : the list refcodes of the overlapping set
+- `to_exclude_from-tmQMg-ref_codes.txt` : the list of refcodes in tmQMg to be excluded (passed to the `outliers` parameters)
+- `ml.py` : a modified version of the code that allows for the selection of the model, the graph representation and the target directly from the command line,
+and sets the list of refcodes to be excluded to restrict the train/test data to the overlapping set
+- `submit-models.sbatch` : a `sbatch` script wrapper for the execution of the code using a SLURM manager (HPC specific)
+- `submit_results.sh` : a `bash` script wrapper to run all the models reported in our results
+
+-------------------------------------------
+### The rest of this section is a copy of the original GitHub repository:
+-----------------------------------------------------------------
+
 ## Gilmer MPNN
 
 This directory holds the code for the experiments conducted with the Gilmer architecture. It is designed to be executed using the Python package Weights and biases (wandb) to log the results.
